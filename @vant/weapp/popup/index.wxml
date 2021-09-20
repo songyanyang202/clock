@@ -1,0 +1,29 @@
+<wxs src="../wxs/utils.wxs" module="utils" />
+<wxs src="./index.wxs" module="computed" />
+
+<van-overlay
+  wx:if="{{ overlay }}"
+  show="{{ show }}"
+  z-index="{{ zIndex }}"
+  custom-style="{{ overlayStyle }}"
+  duration="{{ duration }}"
+  bind:click="onClickOverlay"
+/>
+<view
+  wx:if="{{ inited }}"
+  class="custom-class {{ classes }} {{ utils.bem('popup', [position, { round, safe: safeAreaInsetBottom, safeTop: safeAreaInsetTop }]) }}"
+  style="{{ computed.popupStyle({ zIndex, currentDuration, display, customStyle }) }} "
+  bind:transitionend="onTransitionEnd"
+>
+    <view  class='close-icon-class van-popup__close-icon van-popup__close-icon--{{ closeIconPosition }}' style="top:0;width: 100vw;height:50px;text-align: center;color:#212121; background: #fff;line-height: 50px;">{{title}}</view>
+    <van-icon
+      wx:if="{{ closeable }}"
+      name="{{ closeIcon }}"
+      class="close-icon-class van-popup__close-icon van-popup__close-icon--{{ closeIconPosition }}"
+      bind:tap="onClickCloseIcon"
+    >
+    </van-icon>
+    <view style="height:50px"></view>
+    <slot />
+
+</view>

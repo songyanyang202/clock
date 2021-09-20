@@ -1,0 +1,21 @@
+{
+  "pages": [
+    "pages/clockNormal/canvas"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "canvas",
+    "navigationBarTextStyle": "black"
+  },
+  "usingComponents": {
+    "van-count-down": "@vant/weapp/count-down/index",
+    "van-grid": "@vant/weapp/grid/index",
+    "van-grid-item": "@vant/weapp/grid-item/index",
+    "van-icon": "@vant/weapp/icon/index",
+    "van-button": "@vant/weapp/button/index",
+    "van-slider": "@vant/weapp/slider/index"
+  },
+
+  "sitemapLocation": "sitemap.json"
+}

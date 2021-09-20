@@ -1,0 +1,39 @@
+page{
+    background-color: black;
+}
+
+/* .control-count-down
+{
+     position: absolute;
+} */
+
+.custom-button
+{
+    /* width: 35px;
+    height: 30px; */
+    padding:2px 5px 2px 5px;
+    background:#0080ff;
+    border-radius: 10px;
+    font-size: 20px;
+    /* line-height: 30px; */
+    text-align: center;
+    color:#fff
+}
+
+.gridBK
+{
+    position: fixed;
+    bottom: 100px;
+}
+
+.contClass{
+    --grid-item-content-background-color:none;
+}
+
+.allCenter
+{
+    margin:auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}

@@ -1,0 +1,4 @@
+@import '../common/index.wxss';
+.van-goods-action{
+  position:fixed;right:0;bottom:0;left:0;
+  display:flex;align-items:center;z-index: 20;border-top:0.5px #ECF0F1 solid; padding-top:3px;box-sizing:initial;height:53px;height:var(--goods-action-height,53px);background-color:#fff;background-color:var(--goods-action-background-color,#fff)}.van-goods-action--safe{padding-bottom:env(safe-area-inset-bottom)}
