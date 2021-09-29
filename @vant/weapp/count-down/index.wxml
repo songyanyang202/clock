@@ -1,6 +1,6 @@
 
 
-<view class="van-count-down" style="font-size:{{fontSize}}; line-height: {{fontSize}};">
+<view class="van-count-down" style="font-size:{{fontSize}}; line-height: {{fontSize}}; color:{{fontColor}};">
   <slot wx:if="{{ useSlot }}"/>
   <block wx:else>{{ formattedTime }}</block>
 </view>

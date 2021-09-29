@@ -1,83 +1,86 @@
 
-<!-- 横屏 -->
-<view catchtap="clickTime"  style="width:100vw;height:100vh; border-box;display: flex; ">
-  <view  style="position: relative;margin:auto; width:96%; height:96%;box-sizing: border-box;display: flex; flex-direction: column; justify-content: center;align-items: center; "> 
-        <view   wx:if="{{isLand}}"  style="position: absolute;top:50px; font-size: 50rpx; color:#fff;">{{taskValue}}</view>
-        
-        <view  style="position: absolute; text-align: center;">
-          <!-- 竖屏的写标签 -->
-            <view wx:if="{{!isLand}}" style="margin-top: -100px;">
-                <van-icon wx:if="{{!isEdit}}" bindtap="startEdit" name="edit" size="30px" color="#e1e1e1" />
-                <input wx:else model:value="{{taskValue}}" auto-focus="{{!taskValue?true:false}}"  bindblur="bindblur" style="font-size: 50rpx; color:#fff;height: 70rpx;line-height: 70rpx;"/>
+<view style="width: 100%;background-color: {{bkColor}};">
+
+        <!-- 横屏 -->
+        <view catchtap="clickTime"  style="width:100vw;height:100vh; border-box;display: flex; ">
+        <view  style="position: relative;margin:auto; width:96%; height:96%;box-sizing: border-box;display: flex; flex-direction: column; justify-content: center;align-items: center; "> 
+                <view   wx:if="{{isLand}}"  style="position: absolute;top:50px; font-size: 50rpx; color:#fff;">{{taskValue}}</view>
+                
+                <view  style="position: absolute; text-align: center;">
+                <!-- 竖屏的写标签 -->
+                    <view wx:if="{{!isLand}}" style="margin-top: -100px;">
+                        <van-icon wx:if="{{!isEdit}}" bindtap="startEdit" name="edit" size="30px" color="#e1e1e1" />
+                        <input wx:else model:value="{{taskValue}}" auto-focus="{{!taskValue?true:false}}"  bindblur="bindblur" style="font-size: 50rpx; color:#fff;height: 70rpx;line-height: 70rpx;"/>
+                    </view>
+
+
+                    <van-count-down
+                    class="control-count-down"
+                    millisecond
+                    time="{{ time }}"
+                    auto-start="{{ false }}"
+                    fontSize="{{fontSize}}"
+                    fontColor="{{fontColor}}"
+                    format="mm:ss"
+                    bind:finish="finished"
+                />
+                </view>
+
+                <view wx:if="{{isShowPause}}" style="position: absolute; ">
+                    <van-icon name="play-circle" color="rgba(255,255,255,0.8)" size="40vw"/>
+                </view>
+        </view>
+        </view>
+
+
+        <!-- 竖屏 -->
+        <view  wx:if="{{!isLand}}"  style="width:100vw;margin-top:-35vh;padding-bottom:80px;" >
+            <!-- 选择闹钟 -->
+            <view wx:if="{{isShowClocks && !isRun}}"   style="width: 100%;">
+                <view style="width: 85%;margin: auto;">
+                    <van-slider  bar-height="4px" active-color="#0080ff" min="1" max="900"  value="{{ time/6000 }}" use-button-slot bind:drag="onDrag">
+                                <view class="custom-button" slot="button" bindtap="choseClock" data-time="{{ time/60000 }}">
+                                    {{ time/60000 }}
+                                </view>
+                    </van-slider>
+                </view>
+
+                <view style="height: 14px;"></view>
+                <van-grid column-num="4" border="{{ false }}">
+                    <van-grid-item content-class="contClass" use-slot>
+                        <van-button custom-style="font-size:20px;" round color="#0080ff" size="small" bindtap="choseClock" data-time="{{5}}">5</van-button>
+                    </van-grid-item>
+                    <van-grid-item content-class="contClass" use-slot>
+                        <van-button custom-style="font-size:20px;" round color="#0080ff" size="small" bindtap="choseClock" data-time="{{25}}">25</van-button>
+                    </van-grid-item>
+                    <van-grid-item content-class="contClass" use-slot>
+                        <van-button custom-style="font-size:20px; " round color="#0080ff" size="small" bindtap="choseClock" data-time="{{40}}">40</van-button>
+                    </van-grid-item>
+                    <van-grid-item content-class="contClass" use-slot>
+                        <van-button custom-style="font-size:20px; " round color="#0080ff"size="small" bindtap="choseClock" data-time="{{60}}">60</van-button>
+                    </van-grid-item>
+                </van-grid>
             </view>
+                <view wx:else style="height: 80px; "></view>
 
-
-            <van-count-down
-            class="control-count-down"
-            millisecond
-            time="{{ time }}"
-            auto-start="{{ false }}"
-            fontSize="{{fontSize}}"
-            format="mm:ss"
-            bind:finish="finished"
-          />
+                
+        <!-- 闹钟控制 -->
+                <van-grid  clickable column-num="3" border="{{false}}" icon-size="45px">
+                    <van-grid-item bindtap="addClock" content-class="contClass"  icon="{{isShowClocks && !isRun?'arrow-down':'plus'}}"  icon-color="#e1e1e1" />
+                    <van-grid-item wx:if="{{!isRun}}" content-class="contClass" icon="play-circle-o" bindclick="start" icon-color="#e1e1e1" />
+                    <van-grid-item wx:else content-class="contClass" icon="pause-circle-o" bindclick="pause" icon-color="#e1e1e1"  />
+                    <van-grid-item content-class="contClass"  icon="replay" bindclick="reset" icon-color="#e1e1e1" />
+                </van-grid>
+        <!-- 音乐 + 震动 -->  
+                <view style="width:67%; margin:auto">
+                    <van-grid  clickable column-num="2" border="{{false}}" icon-size="35px">
+                        <van-grid-item bindtap="chgStatus" data-key="volume"  content-class="contClass"  icon="volume-o"  icon-color="{{volume?'#0080ff':'#e1e1e1'}}" />
+                        <!-- <van-grid-item bindtap="play" data-key="music"   content-class="contClass" icon="music-o"  icon-color="{{music?'#0080ff':'#e1e1e1'}}"  />
+        -->
+                        <van-grid-item bindtap="chgStatus" data-key="shake"   content-class="contClass"  icon="bulb-o"  icon-color="{{shake?'#0080ff':'#e1e1e1'}}"  />
+                    </van-grid>
+                </view>
         </view>
 
-        <view wx:if="{{isShowPause}}" style="position: absolute; ">
-            <van-icon name="play-circle" color="rgba(255,255,255,0.8)" size="40vw"/>
-        </view>
-  </view>
-</view>
-
-
-<!-- 竖屏 -->
-<view  wx:if="{{!isLand}}"  style="width:100vw;margin-top:-35vh;" >
-      <!-- 选择闹钟 -->
-      <view wx:if="{{isShowClocks && !isRun}}"   style="width: 100%;">
-          <view style="width: 85%;margin: auto;">
-              <van-slider  bar-height="4px" active-color="#0080ff" min="1" max="900"  value="{{ time/6000 }}" use-button-slot bind:drag="onDrag">
-                          <view class="custom-button" slot="button" bindtap="choseClock" data-time="{{ time/60000 }}">
-                              {{ time/60000 }}
-                          </view>
-              </van-slider>
-          </view>
-
-          <view style="height: 14px;"></view>
-          <van-grid column-num="4" border="{{ false }}">
-              <van-grid-item content-class="contClass" use-slot>
-                  <van-button custom-style="font-size:20px;" round color="#0080ff" size="small" bindtap="choseClock" data-time="{{5}}">5</van-button>
-              </van-grid-item>
-              <van-grid-item content-class="contClass" use-slot>
-                  <van-button custom-style="font-size:20px;" round color="#0080ff" size="small" bindtap="choseClock" data-time="{{25}}">25</van-button>
-              </van-grid-item>
-              <van-grid-item content-class="contClass" use-slot>
-                  <van-button custom-style="font-size:20px; " round color="#0080ff" size="small" bindtap="choseClock" data-time="{{40}}">40</van-button>
-              </van-grid-item>
-              <van-grid-item content-class="contClass" use-slot>
-                  <van-button custom-style="font-size:20px; " round color="#0080ff"size="small" bindtap="choseClock" data-time="{{60}}">60</van-button>
-              </van-grid-item>
-          </van-grid>
-      </view>
-        <view wx:else style="height: 80px; "></view>
-
-        
-<!-- 闹钟控制 -->
-        <van-grid  clickable column-num="3" border="{{false}}" icon-size="45px">
-              <van-grid-item bindtap="addClock" content-class="contClass"  icon="{{isShowClocks && !isRun?'arrow-down':'plus'}}"  icon-color="#e1e1e1" />
-              <van-grid-item wx:if="{{!isRun}}" content-class="contClass" icon="play-circle-o" bindclick="start" icon-color="#e1e1e1" />
-              <van-grid-item wx:else content-class="contClass" icon="pause-circle-o" bindclick="pause" icon-color="#e1e1e1"  />
-              <van-grid-item content-class="contClass"  icon="replay" bindclick="reset" icon-color="#e1e1e1" />
-        </van-grid>
-<!-- 音乐 + 震动 -->  
-        <view style="width:67%; margin:auto">
-              <van-grid  clickable column-num="2" border="{{false}}" icon-size="35px">
-                  <van-grid-item bindtap="chgStatus" data-key="volume"  content-class="contClass"  icon="volume-o"  icon-color="{{volume?'#0080ff':'#e1e1e1'}}" />
-                  <!-- <van-grid-item bindtap="play" data-key="music"   content-class="contClass" icon="music-o"  icon-color="{{music?'#0080ff':'#e1e1e1'}}"  />
- -->
-                  <van-grid-item bindtap="chgStatus" data-key="shake"   content-class="contClass"  icon="bulb-o"  icon-color="{{shake?'#0080ff':'#e1e1e1'}}"  />
-            </van-grid>
-        </view>
 
 </view>
-
-

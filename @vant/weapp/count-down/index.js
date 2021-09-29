@@ -24,7 +24,11 @@ component_1.VantComponent({
     fontSize: {
       type: String,
       value: '50px',
-    }
+    },
+    fontColor: {
+      type: String,
+      value: '#fff',
+    },
   },
   data: {
     timeData: utils_1.parseTimeData(0),

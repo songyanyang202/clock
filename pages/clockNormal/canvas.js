@@ -4,12 +4,47 @@ myaudio.src = "/mp3/volume.mp3";
 
 Page({
     data: {
+        bkColorIndex: 0,
+        bkColor: 'black',
+        bkColorList:['black', '#e54d42', '#f37b1d','#fbbd08','#8dc63f',
+                        '#39b54a','#1cbbb4','#0081ff','#6739b6',
+                        '#9c26b0','#e03997','#a5673f'],
         time: 25 * 60 * 1000,
         timeData: {},
         fontSize: '150rpx',
+        fontColor: '#fff',
         taskValue:'',
 
         shake:true, //默认震动
+      },
+
+      onShow()
+      {
+        wx.setKeepScreenOn({
+            keepScreenOn: true
+          })
+      },
+      //防烧屏
+      chgBkColor()
+      {
+          var that = this;
+          let i = that.data.bkColorIndex;
+          that.bkTimer = setInterval(res=>{
+              if(that.data.isLand)
+              {
+                  i++;
+                  if(i >11)
+                  {
+                    i = 0;
+                    that.data.bkColorIndex = 0;
+                  }
+                    that.setData({
+                        bkColor: that.data.bkColorList[i], 
+                        fontSize: i%2? '250rpx': '200rpx',
+                        fontColor: i%2? '#fff': '#212121'
+                    })
+              }
+          }, 20000)
       },
 
       gohehe()
@@ -32,6 +67,7 @@ Page({
                 fontSize: '200rpx'
             }) 
             this.start();
+            this.chgBkColor();
             wx.setScreenBrightness({value:0})
         }
         else
@@ -39,26 +75,15 @@ Page({
             this.setData({
                 isLand: false,
                 fontSize: '150rpx',
-                isShowPause: false
-            }) 
+                isShowPause: false,
+                fontColor:'#fff',
+                bkColor: 'black'
+            })
+            this.data.bkColorIndex = 0;
             
-            //没有暂停  响铃/震动,竖屏暂停
-            if(this.data.isShaking || this.data.isPlayVol)
-            {
-                if(this.data.isShaking)
-                {
-                    console.log('clearInterval-3', this.timer)
-                    this.data.isShaking = false;
-                    clearInterval(this.timer);
-                    this.data.closeShake = false;
-                }
-                if(this.data.isPlayVol)
-                {
-                    console.log('stopVol-3')
-                    this.stopVol();
-                }
-                this.reset()
-            }
+            //响铃/震动,竖屏暂停
+            this.closeShakeOrVol();
+            clearInterval(this.bkTimer)
         }
       },
 
@@ -130,27 +155,35 @@ Page({
             console.log('clickTime-单击')
 
             this.lastTapTimeoutFunc = setTimeout(() => {
-                //单击关闭震动/响铃
-                if(that.data.isShaking || that.data.isPlayVol)
-                {
-                    if(that.data.isShaking)
-                    {
-                        console.log('clearInterval-1', that.timer)
-                        that.data.isShaking = false;
-                        clearInterval(that.timer);
-                        that.data.closeShake = false;
-                    }
-                    if(that.data.isPlayVol)
-                    {
-                        console.log('stopVol-3')
-                        that.stopVol();
-                    }
-                    that.reset()
-                }
+                that.closeShakeOrVol()
             }, 500);
         }
         //更新点击时间
         this.lastTapTime = currentTime;
+    },
+
+    //关闭震动和响铃
+    closeShakeOrVol()
+    {
+        var that = this;
+        //单击关闭震动/响铃
+        if(that.data.timeEnd)
+        {
+            if(that.data.isShaking)
+            {
+                console.log('clearInterval-1', that.timer)
+                that.data.isShaking = false;
+                clearInterval(that.timer);
+                that.data.closeShake = false;
+            }
+            if(that.data.isPlayVol)
+            {
+                console.log('stopVol-3')
+                that.stopVol();
+            }
+            wx.hideToast()
+            that.reset()
+        }
     },
 
 
@@ -180,27 +213,27 @@ Page({
       const countDown = this.selectComponent('.control-count-down');
       countDown.reset();
       this.setData({
-        isRun: false
+        isRun: false,
+        timeEnd: false
       })
     },
   
     finished() {
         console.log('finished-')
-        // wx.showToast({
-        //     title: '倒计时结束',
-        //     icon:'none'
-        // })
-                
+        wx.showToast({
+          title: '到时间了',
+          duration: 12000
+        })
+        this.data.timeEnd = true;//到时间了
+        
+        //没有震动和响铃
         if(!this.data.shake && !this.data.volume)
         {
-            setTimeout(res=>{
-                that.reset()
-            }, 500)
+            setTimeout(res=>{that.reset();}, 12000)
             return;
         }
 
         var that = this;
-
         //开启响铃
         if(this.data.volume)
         {
@@ -229,8 +262,9 @@ Page({
                 console.log('stopVol-2')
                 that.stopVol();
             }
+            wx.hideToast()
             that.reset()
-        }, 6000)
+        }, 12000)
 
     },
 
